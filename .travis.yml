@@ -19,5 +19,5 @@ install:
   - npm install
 
 script:
-  - npm run testrpc
+  - npm run testrpc &
   - npm run test
