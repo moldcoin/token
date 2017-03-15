@@ -1,3 +1,4 @@
+[![Build Status](https://secure.travis-ci.org/moldcoin/token.png)](http://travis-ci.org/moldcoin/token)
 
  <img src = "https://avatars1.githubusercontent.com/u/25629406?v=3&s=200" width = "200">
  
