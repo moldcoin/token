@@ -1,0 +1,27 @@
+{
+  "name": "moldcoin",
+  "version": "1.0.0",
+  "description": "moldcoin",
+  "author": "MoldCoin team",
+  "scripts": {
+    "compile": "node_modules/.bin/truffle compile",
+    "console": "node_modules/.bin/truffle console",
+    "test": "node_modules/.bin/truffle test",
+    "testrpc": "node_modules/.bin/testrpc",
+    "migrate": "node_modules/.bin/truffle migrate",
+    "serve": "node_modules/.bin/truffle serve"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "ethereumjs-testrpc": "^3.0.3",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "tracer": "^0.8.7",
+    "truffle": "^3.1.2",
+    "web3": "^0.18.2"
+  },
+  "engines": {
+    "node": ">=7"
+  },
+  "license": "MIT"
+}
