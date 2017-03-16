@@ -125,7 +125,6 @@ contract StandardToken is Token {
 }
 
 
-
 /**
  * MoldCoin ICO contract.
  *
