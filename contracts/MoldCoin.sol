@@ -193,11 +193,11 @@ contract MoldCoin is StandardToken, SafeMath {
     /**
      * allow anyone sends funds to the contract
      */
-    function buy() {
+    function buy() payable {
         buyRecipient(msg.sender);
     }
 
-    function() {
+    function() payable {
         buyRecipient(msg.sender);
     }
 

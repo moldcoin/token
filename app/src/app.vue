@@ -64,7 +64,40 @@
         },
 
         mounted() {
+
+            var Web3 = require('web3');
+            var MoldCoin = require("../../build/contracts/MoldCoin.json");
+            var contract = require("truffle-contract");
+
+            var mold = contract(MoldCoin);
+            var provider = new Web3.providers.HttpProvider("http://localhost:8545");
+
+            mold.setProvider(provider);
+
+            let networks = Object.values(mold.networks);
+            console.log(networks[networks.length-1].address);
+
+            this.address = networks[networks.length-1].address;
             this.showQR();
+
+            var coin;
+            mold.deployed().then(function(instance) {
+                coin = instance;
+                return coin.name.call();
+            }).then(function(result){
+                console.log(result);
+                return coin.startDatetime.call();
+            }).then(function(result){
+                console.log(result);
+                return coin.totalSupply();
+            }).then(function(result){
+                console.log(result);
+                return coin.saleTokenSupply();
+            }).then(function(result){
+                console.log(result);
+            });
+
+
         }
     }
 

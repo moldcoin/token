@@ -39,7 +39,7 @@
     "json-loader": "^0.5.4",
     "tracer": "^0.8.7",
     "truffle": "^3.1.2",
-    "uglifyjs-webpack-plugin": "^0.3.0",
+    "truffle-contract": "^1.1.10",
     "url-loader": "^0.5.7",
     "vue": "^2.0.0",
     "vue-loader": "^10.0.2",

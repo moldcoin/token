@@ -1,6 +1,5 @@
 const path = require('path');
-//const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-var webpack = require('webpack')
+const webpack = require('webpack')
 
 module.exports = {
     entry: {
@@ -13,10 +12,6 @@ module.exports = {
 
     },
     plugins: [
-        // new UglifyJSPlugin({
-        //     sourceMap: false
-        // })
-// short-circuits all Vue.js warning code
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: '"production"'

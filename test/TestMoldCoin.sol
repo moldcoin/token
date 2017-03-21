@@ -44,4 +44,17 @@ contract TestMoldCoin {
         Assert.equal(mold.price(startDatetime + 120 hours + 240 hours - 1 seconds), 333, "second stage should return 333");
         Assert.equal(mold.price(startDatetime + 120 hours + 240 hours + 1 seconds), 250, "other time should return 250");
     }
+//    function testBuy() {
+//        uint startDatetime = now;
+//        MoldCoin mold = new MoldCoin(startDatetime);
+//        bool r = mold.buy.gas(200000)();
+//        Assert.isFalse(r, "Should be false, as it should throw");
+
+//        Assert.equal(mold.price(startDatetime), 500, "first stage should return 500");
+//        Assert.equal(mold.price(startDatetime + 1 hours), 500, "first stage should return 500");
+//        Assert.equal(mold.price(startDatetime + 120 hours), 500, "first stage should return 500");
+//        Assert.equal(mold.price(startDatetime + 121 hours), 333, "second stage should return 333");
+//        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours), 333, "second stage should return 333");
+//        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours + 1 hours), 250, "other time should return 250");
+//    }
 }
