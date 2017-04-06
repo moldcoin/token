@@ -20,6 +20,13 @@ contract SafeMath {
     return c;
   }
 
+  function safeDiv(uint a, uint b) internal returns (uint) {
+      assert(b > 0);
+      uint c = a / b;
+      assert(a == b * c + a % b);
+      return c;
+  }
+
   function assert(bool assertion) internal {
     if (!assertion) throw;
   }
@@ -133,6 +140,10 @@ contract MoldCoin is StandardToken, SafeMath {
 
     string public name = "MoldCoin";
     string public symbol = "MOLD";
+    uint public decimals = 16;
+
+    uint internal baseNumber = 10**(18-decimals);
+
     uint public startDatetime; //crowdsale start datetime seconds
     uint public firstStageDatetime; //first 120 hours crowdsale in seconds
     uint public secondStageDatetime; //second stage, 240 hours of crowsale in seconds.
@@ -142,9 +153,9 @@ contract MoldCoin is StandardToken, SafeMath {
     // All deposited ETH will be instantly forwarded to this address.
     address public founder = 0x0;
 
-    uint public coinAllocation = 20 * 10**8; //2000M tokens supply for crowdsale
-    uint public angelAllocation = 1 * 10**8; // 100M of token supply allocated angel investor
-    uint public founderAllocation = 4 * 10**8; //400M of token supply allocated for the founder allocation
+    uint public coinAllocation = 20 * 10**8 * 10**16; //2000M tokens supply for crowdsale
+    uint public angelAllocation = 1 * 10**8 * 10**16; // 100M of token supply allocated angel investor
+    uint public founderAllocation = 4 * 10**8 * 10**16; //400M of token supply allocated for the founder allocation
 
     bool public bountyAllocated = false; //this will change to true when the bounty fund is allocated
     bool public angelAllocated = false; //this will change to true when the ecosystem fund is allocated
@@ -155,7 +166,7 @@ contract MoldCoin is StandardToken, SafeMath {
 
     uint public angelTokenSupply = 0; //this will keep track of the token angel supply
 
-    //add supply per month 1% until all coin was allocated in the end of crowdsalewill keep track of the token angel supply
+    //add supply per month 1% until all coin was allocated in the end of crowdsale will keep track of the token angel supply
     uint public lastInflationDatetime = 0;
     uint public inflatableSupply = 0;
 
@@ -209,7 +220,7 @@ contract MoldCoin is StandardToken, SafeMath {
         if (now < startDatetime || halted) throw;
         if (inflatableSupply == 0 && now > endDatetime) throw;
 
-        uint tokens = safeMul(msg.value, price(now));
+        uint tokens = safeMul(msg.value, price(now))/baseNumber;
 
         if ( safeAdd(saleTokenSupply,tokens)>coinAllocation ) throw;
 
@@ -254,13 +265,14 @@ contract MoldCoin is StandardToken, SafeMath {
         if (msg.sender!=founder) throw;
         if (now <= endDatetime) throw;
 
-        if ( safeAdd(angelTokenSupply,tokens)>angelAllocation ) throw;
+        uint amount = tokens*10**decimals;
+        if ( safeAdd(angelTokenSupply,amount)>angelAllocation ) throw;
 
-        angelTokenSupply = safeAdd(angelTokenSupply, tokens);
-        balances[angel] = safeAdd(balances[angel], tokens);
-        totalSupply = safeAdd(totalSupply, tokens);
+        angelTokenSupply = safeAdd(angelTokenSupply, amount);
+        balances[angel] = safeAdd(balances[angel], amount);
+        totalSupply = safeAdd(totalSupply, amount);
 
-        AllocateAngelTokens(msg.sender, angel, tokens);
+        AllocateAngelTokens(msg.sender, angel, amount);
     }
 
     /**
@@ -287,13 +299,15 @@ contract MoldCoin is StandardToken, SafeMath {
     /**
      * Inflation
      */
-    function inflate(uint inf) {
+    function inflate(uint tokens) {
         if (msg.sender!=founder) throw;
         if (now < endDatetime + 4 weeks) throw;
         if (now < lastInflationDatetime + 4 weeks) throw;
-        if (safeAdd(safeAdd(saleTokenSupply, inflatableSupply), inf) > coinAllocation) throw;
 
-        inflatableSupply = safeAdd(inflatableSupply, inf);
+        uint amount = tokens*10**decimals;
+        if (safeAdd(safeAdd(saleTokenSupply, inflatableSupply), amount) > coinAllocation) throw;
+
+        inflatableSupply = safeAdd(inflatableSupply, amount);
         lastInflationDatetime = now;
     }
 

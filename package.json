@@ -5,7 +5,7 @@
   "author": "MoldCoin team",
   "scripts": {
     "test": "node_modules/.bin/truffle test",
-    "testrpc": "node_modules/.bin/testrpc"
+    "testrpc": "node_modules/.bin/testrpc --account='0xfeb72ffb6bb482e3d4b5f0168f24ece904e8ddb7d3076362b94a209078666de6,5000000000000000000000000' --account='0xdd1f69c790ec35a5e70b6511b2c7128a23109617372bcc3102d0caef47ffdf0e,0'"
   },
   "repository": {
     "type": "git",
