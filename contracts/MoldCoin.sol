@@ -114,6 +114,8 @@ contract StandardToken is Token {
     }
 
     function approve(address _spender, uint256 _value) returns (bool success) {
+        if ((_value != 0) && (allowed[msg.sender][_spender] != 0)) throw;
+
         allowed[msg.sender][_spender] = _value;
         Approval(msg.sender, _spender, _value);
         return true;
