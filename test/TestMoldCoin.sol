@@ -10,7 +10,10 @@ contract TestMoldCoin {
         MoldCoin mold = MoldCoin(DeployedAddresses.MoldCoin());
 
         uint startDatetime = mold.startDatetime();
-        Assert.equal(startDatetime, 1496275200, "first stage should return 500");
+
+//        > Date.parse('2017-09-01T00:00:00Z')/1000
+//        1504224000
+        Assert.equal(startDatetime, 1504224000, "ico will start on '2017-09-01T00:00:00Z'");
     }
 
     function testPrice() {

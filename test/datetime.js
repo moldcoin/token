@@ -11,7 +11,7 @@ contract('Date Range of MoldCoin', function (accounts) {
         return MoldCoin.deployed().then(function (instance) {
             return instance.startDatetime();
         }).then(function (startDatetime) {
-            let timestamp = Math.floor(Date.parse('2017-06-01T00:00:00') / 1000);
+            let timestamp = Math.floor(Date.parse('2017-09-01T00:00:00Z') / 1000);
             assert.equal(startDatetime, timestamp);
         });
     });
