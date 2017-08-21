@@ -5,39 +5,80 @@ const toWei = utils.toWei;
 const tokens = utils.tokens;
 
 contract('Date Range of MoldCoin', function (accounts) {
-    logger.log(accounts);
+  logger.log(accounts);
+  let founder = accounts[1];
 
-    it("start time case 1", function () {
-        return MoldCoin.deployed().then(function (instance) {
-            return instance.startDatetime();
-        }).then(function (startDatetime) {
-            let timestamp = Math.floor(Date.parse('2017-09-01T00:00:00Z') / 1000);
-            assert.equal(startDatetime, timestamp);
-        });
-    });
+  it("start time case 1", async function () {
+    let wantDate = new Date('2017-09-01T00:00:00Z')
 
-    it("start time case 2", function () {
-        let dateTime = Math.floor(Date.now() / 1000);
-        return MoldCoin.new(dateTime).then(function (instance) {
-            return instance.startDatetime();
-        }).then(function (startDatetime) {
-            logger.log(startDatetime);
-            assert.equal(startDatetime, dateTime);
-        });
-    });
-    it("alloc founder token ", function () {
-        let dateTime = Math.floor(Date.now() / 1000);
-        let coin = null;
+    let instance = await MoldCoin.deployed();
+    let startDatetime = await instance.startDatetime();
+    console.log(startDatetime)
+    {
+      let timestamp = Math.floor(wantDate.valueOf() / 1000);
+      console.log(timestamp)
+      assert.equal(startDatetime, timestamp);
+    }
 
-        return MoldCoin.new(dateTime).then(function (instance) {
-            coin = instance;
-            return coin.sendTransaction({value: toWei((20 * 10 ** 8 - 500) / 500)});
-        }).then(function (result) {
-            logger.log(result);
-            return coin.allocateFounderTokens();
-        }).catch(function (e) {
-            logger.log(e);
-            assert.instanceOf(e, Error);
-        });
-    });
+    let firstStageDatetime = await instance.firstStageDatetime();
+    {
+      let timestamp = parseFloat(startDatetime) + 120*60*60;
+      assert.equal(firstStageDatetime, timestamp);
+    }
+
+    let secondStageDatetime = await instance.secondStageDatetime();
+    {
+      let timestamp = parseFloat(firstStageDatetime) + 240*60*60;
+      assert.equal(secondStageDatetime, timestamp);
+    }
+
+    let endDatetime = await instance.endDatetime();
+    {
+      let timestamp = parseFloat(secondStageDatetime) + 2040*60*60;
+      assert.equal(endDatetime, timestamp);
+    }
+
+    let lastReleaseDatetime = await instance.endDatetime();
+    {
+      let timestamp = parseFloat(secondStageDatetime) + 2040*60*60;
+      assert.equal(lastReleaseDatetime, timestamp);
+    }
+
+  });
+
+  it("start time case 2", async function () {
+    let dateTime = Math.floor(Date.now() / 1000);
+
+    let instance = await MoldCoin.new(dateTime, founder);
+    let startDatetime = await instance.startDatetime();
+    console.log(startDatetime)
+    {
+      let timestamp = dateTime;
+      assert.equal(startDatetime, timestamp);
+    }
+
+    let firstStageDatetime = await instance.firstStageDatetime();
+    {
+      let timestamp = parseFloat(startDatetime) + 120*60*60;
+      assert.equal(firstStageDatetime, timestamp);
+    }
+
+    let secondStageDatetime = await instance.secondStageDatetime();
+    {
+      let timestamp = parseFloat(firstStageDatetime) + 240*60*60;
+      assert.equal(secondStageDatetime, timestamp);
+    }
+
+    let endDatetime = await instance.endDatetime();
+    {
+      let timestamp = parseFloat(secondStageDatetime) + 2040*60*60;
+      assert.equal(endDatetime, timestamp);
+    }
+
+    let lastReleaseDatetime = await instance.endDatetime();
+    {
+      let timestamp = parseFloat(secondStageDatetime) + 2040*60*60;
+      assert.equal(lastReleaseDatetime, timestamp);
+    }
+  });
 });

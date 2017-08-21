@@ -18,7 +18,7 @@ contract TestMoldCoin {
 
     function testPrice() {
         uint startDatetime = 1000;
-        MoldCoin mold = new MoldCoin(startDatetime);
+        MoldCoin mold = new MoldCoin(startDatetime,0x0);
         Assert.equal(mold.price(startDatetime), 500, "first stage should return 500");
         Assert.equal(mold.price(startDatetime + 1 hours), 500, "first stage should return 500");
         Assert.equal(mold.price(startDatetime + 120 hours), 500, "first stage should return 500");
@@ -28,7 +28,7 @@ contract TestMoldCoin {
     }
     function testPrice2() {
         uint startDatetime = 123456;
-        MoldCoin mold = new MoldCoin(startDatetime);
+        MoldCoin mold = new MoldCoin(startDatetime,0x0);
         Assert.equal(mold.price(startDatetime), 500, "first stage should return 500");
         Assert.equal(mold.price(startDatetime - 1 seconds), 0, "should return 0");
         Assert.equal(mold.price(startDatetime + 120 hours - 1 seconds), 500, "first stage should return 500");

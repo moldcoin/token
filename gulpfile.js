@@ -2,7 +2,7 @@ const gulp = require('gulp');
 const del = require('del');
 const shell = require('gulp-shell');
 
-gulp.task('testrpc', shell.task('node_modules/.bin/testrpc --account="0xfeb72ffb6bb482e3d4b5f0168f24ece904e8ddb7d3076362b94a209078666de6,5000000000000000000000000" --account="0xdd1f69c790ec35a5e70b6511b2c7128a23109617372bcc3102d0caef47ffdf0e,0"'));
+gulp.task('testrpc', shell.task('node_modules/.bin/testrpc --account="0xfeb72ffb6bb482e3d4b5f0168f24ece904e8ddb7d3076362b94a209078666de6,5000000000000000000000000" --account="0xdd1f69c790ec35a5e70b6511b2c7128a23109617372bcc3102d0caef47ffdf0e,0" --account="0xfe1b14649a99e27ad630e19d114330db7fc30870c4fd8a5d3946a15cd0b111d6,0" --account="0xa61266a8513e80ad455ff5764e155ab492c365a2b720084a77427436eb3de01c,0"　'));
 
 gulp.task('test', shell.task('node_modules/.bin/truffle test'));
 

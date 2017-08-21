@@ -4,14 +4,27 @@
   "description": "moldcoin",
   "author": "MoldCoin team",
   "scripts": {
-    "test": "node_modules/.bin/truffle test",
+    "test": "./node_modules/.bin/truffle test",
     "testrpc": "node_modules/.bin/testrpc --account='0xfeb72ffb6bb482e3d4b5f0168f24ece904e8ddb7d3076362b94a209078666de6,5000000000000000000000000' --account='0xdd1f69c790ec35a5e70b6511b2c7128a23109617372bcc3102d0caef47ffdf0e,0'"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/moldcoin/token.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "axios": "^0.16.2",
+    "chalk": "^2.1.0",
+    "figlet": "^1.2.0",
+    "koa": "^2.3.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-compress": "^2.0.0",
+    "koa-logger": "^3.0.1",
+    "koa-router-cache": "^2.0.0",
+    "koa-static-cache": "^5.1.1",
+    "tracer": "^0.8.7",
+    "web3": "^1.0.0-beta.18",
+    "zlib": "^1.0.5"
+  },
   "devDependencies": {
     "babel-cli": "^6.22.2",
     "babel-core": "^6.22.1",
@@ -37,20 +50,18 @@
     "gulp-shell": "^0.6.3",
     "html-webpack-plugin": "^2.28.0",
     "json-loader": "^0.5.4",
-    "tracer": "^0.8.7",
     "truffle": "^3.1.2",
     "truffle-contract": "^1.1.10",
     "url-loader": "^0.5.7",
     "vue": "^2.0.0",
     "vue-loader": "^10.0.2",
     "vue-template-compiler": "^2.1.4",
-    "web3": "^0.18.2",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.4.2",
     "webpack-hot-middleware": "^2.17.1"
   },
   "engines": {
-    "node": ">=7"
+    "node": ">=8"
   },
   "license": "MIT"
 }

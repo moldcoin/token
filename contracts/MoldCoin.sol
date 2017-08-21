@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.11;
 
 contract SafeMath {
   //internals
@@ -26,70 +26,64 @@ contract SafeMath {
       assert(a == b * c + a % b);
       return c;
   }
-
-  function assert(bool assertion) internal {
-    if (!assertion) throw;
-  }
 }
 
-/**
- * ERC 20 token
- *
- */
-contract Token {
+// ERC 20 Token
+// https://github.com/ethereum/EIPs/issues/20
 
-    /// @return total amount of tokens
-    function totalSupply() constant returns (uint256 supply) {}
+contract Token {
+    /* This is a slight change to the ERC20 base standard.
+    function totalSupply() constant returns (uint256 supply);
+    is replaced with:
+    uint256 public totalSupply;
+    This automatically creates a getter function for the totalSupply.
+    This is moved to the base contract since public getter functions are not
+    currently recognised as an implementation of the matching abstract
+    function by the compiler.
+    */
+    /// total amount of tokens
+    uint256 public totalSupply;
 
     /// @param _owner The address from which the balance will be retrieved
     /// @return The balance
-    function balanceOf(address _owner) constant returns (uint256 balance) {}
+    function balanceOf(address _owner) constant returns (uint256 balance);
 
     /// @notice send `_value` token to `_to` from `msg.sender`
     /// @param _to The address of the recipient
     /// @param _value The amount of token to be transferred
     /// @return Whether the transfer was successful or not
-    function transfer(address _to, uint256 _value) returns (bool success) {}
+    function transfer(address _to, uint256 _value) returns (bool success);
 
     /// @notice send `_value` token to `_to` from `_from` on the condition it is approved by `_from`
     /// @param _from The address of the sender
     /// @param _to The address of the recipient
     /// @param _value The amount of token to be transferred
     /// @return Whether the transfer was successful or not
-    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {}
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success);
 
-    /// @notice `msg.sender` approves `_addr` to spend `_value` tokens
+    /// @notice `msg.sender` approves `_spender` to spend `_value` tokens
     /// @param _spender The address of the account able to transfer the tokens
-    /// @param _value The amount of wei to be approved for transfer
+    /// @param _value The amount of tokens to be approved for transfer
     /// @return Whether the approval was successful or not
-    function approve(address _spender, uint256 _value) returns (bool success) {}
+    function approve(address _spender, uint256 _value) returns (bool success);
 
     /// @param _owner The address of the account owning tokens
     /// @param _spender The address of the account able to transfer the tokens
     /// @return Amount of remaining tokens allowed to spent
-    function allowance(address _owner, address _spender) constant returns (uint256 remaining) {}
+    function allowance(address _owner, address _spender) constant returns (uint256 remaining);
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-
 }
 
-/**
- * ERC 20 token
- *
- */
 contract StandardToken is Token {
 
-    /**
-     * Reviewed:
-     * - Interger overflow = OK, checked
-     */
     function transfer(address _to, uint256 _value) returns (bool success) {
         //Default assumes totalSupply can't be over max (2^256 - 1).
         //If your token leaves out totalSupply and can issue more tokens as time goes on, you need to check if it doesn't wrap.
         //Replace the if with this one instead.
-        if (balances[msg.sender] >= _value && balances[_to] + _value > balances[_to]) {
-        //if (balances[msg.sender] >= _value && _value > 0) {
+        //if (balances[msg.sender] >= _value && balances[_to] + _value > balances[_to]) {
+        if (balances[msg.sender] >= _value && _value > 0) {
             balances[msg.sender] -= _value;
             balances[_to] += _value;
             Transfer(msg.sender, _to, _value);
@@ -99,8 +93,8 @@ contract StandardToken is Token {
 
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
         //same as above. Replace this line with the following if you want to protect against wrapping uints.
-        if (balances[_from] >= _value && allowed[_from][msg.sender] >= _value && balances[_to] + _value > balances[_to]) {
-        //if (balances[_from] >= _value && allowed[_from][msg.sender] >= _value && _value > 0) {
+        //if (balances[_from] >= _value && allowed[_from][msg.sender] >= _value && balances[_to] + _value > balances[_to]) {
+        if (balances[_from] >= _value && allowed[_from][msg.sender] >= _value && _value > 0) {
             balances[_to] += _value;
             balances[_from] -= _value;
             allowed[_from][msg.sender] -= _value;
@@ -114,8 +108,6 @@ contract StandardToken is Token {
     }
 
     function approve(address _spender, uint256 _value) returns (bool success) {
-        if ((_value != 0) && (allowed[msg.sender][_spender] != 0)) throw;
-
         allowed[msg.sender][_spender] = _value;
         Approval(msg.sender, _spender, _value);
         return true;
@@ -125,12 +117,8 @@ contract StandardToken is Token {
       return allowed[_owner][_spender];
     }
 
-    mapping(address => uint256) balances;
-
+    mapping (address => uint256) balances;
     mapping (address => mapping (address => uint256)) allowed;
-
-    uint256 public totalSupply;
-
 }
 
 
@@ -142,9 +130,7 @@ contract MoldCoin is StandardToken, SafeMath {
 
     string public name = "MoldCoin";
     string public symbol = "MOLD";
-    uint public decimals = 16;
-
-    uint internal baseNumber = 10**(18-decimals);
+    uint public decimals = 18;
 
     uint public startDatetime; //crowdsale start datetime seconds
     uint public firstStageDatetime; //first 120 hours crowdsale in seconds
@@ -153,11 +139,14 @@ contract MoldCoin is StandardToken, SafeMath {
 
     // Initial founder address (set in constructor)
     // All deposited ETH will be instantly forwarded to this address.
-    address public founder = 0x0;
+    address public founder;
 
-    uint public coinAllocation = 20 * 10**8 * 10**16; //2000M tokens supply for crowdsale
-    uint public angelAllocation = 1 * 10**8 * 10**16; // 100M of token supply allocated angel investor
-    uint public founderAllocation = 4 * 10**8 * 10**16; //400M of token supply allocated for the founder allocation
+    // administrator address
+    address public admin;
+
+    uint public coinAllocation = 20 * 10**8 * 10**decimals; //2000M tokens supply for crowdsale
+    uint public angelAllocation = 1 * 10**8 * 10**decimals; // 100M of token supply allocated angel investor
+    uint public founderAllocation = 4 * 10**8 * 10**decimals; //400M of token supply allocated for the founder allocation
 
     bool public bountyAllocated = false; //this will change to true when the bounty fund is allocated
     bool public angelAllocated = false; //this will change to true when the ecosystem fund is allocated
@@ -169,8 +158,9 @@ contract MoldCoin is StandardToken, SafeMath {
     uint public angelTokenSupply = 0; //this will keep track of the token angel supply
 
     //add supply per month 1% until all coin was allocated in the end of crowdsale will keep track of the token angel supply
-    uint public lastInflationDatetime = 0;
-    uint public inflatableSupply = 0;
+    uint public lastReleaseDatetime = 0;
+    uint public releasedSupply = 0;
+    uint public maxReleaseTokens = 2 * 10**6 * 10**decimals; //2M of unsold tokens will be releasable every month
 
     bool public halted = false; //the founder address can set this to true to halt the crowdsale due to emergency
 
@@ -179,18 +169,23 @@ contract MoldCoin is StandardToken, SafeMath {
     event AllocateFounderTokens(address indexed sender);
     event AllocateAngelTokens(address indexed sender, address to, uint mold);
 
+    modifier onlyAdmin {
+        require(msg.sender == admin);
+        _;
+    }
     /**
      *
      * Integer value representing the number of seconds since 1 January 1970 00:00:00 UTC
      */
-    function MoldCoin(uint startDatetimeInSeconds) {
+    function MoldCoin(uint startDatetimeInSeconds, address founderWallet) {
 
-        founder = msg.sender;
+        admin = msg.sender;
+        founder = founderWallet;
         startDatetime = startDatetimeInSeconds;
         firstStageDatetime = startDatetime + 120 * 1 hours;
         secondStageDatetime = firstStageDatetime + 240 * 1 hours;
         endDatetime = secondStageDatetime + 2040 * 1 hours;
-
+        lastReleaseDatetime = endDatetime;
     }
 
     /**
@@ -201,7 +196,7 @@ contract MoldCoin is StandardToken, SafeMath {
         if (timeInSeconds <= firstStageDatetime) return 500; //120 hours
         if (timeInSeconds <= secondStageDatetime) return 333; //240 hours
         if (timeInSeconds <= endDatetime) return 250; //2040 hours
-        return 250;
+        return 0;
     }
     /**
      * allow anyone sends funds to the contract
@@ -219,26 +214,20 @@ contract MoldCoin is StandardToken, SafeMath {
      * Buy for the sender itself or buy on the behalf of somebody else (third party address).
      */
     function buyRecipient(address recipient) payable {
-        if (now < startDatetime || halted) throw;
-        if (inflatableSupply == 0 && now > endDatetime) throw;
+        require(!halted);
+        require(now >= startDatetime);
+        require(now <= endDatetime);
 
-        uint tokens = safeMul(msg.value, price(now))/baseNumber;
-
-        if ( safeAdd(saleTokenSupply,tokens)>coinAllocation ) throw;
-
-        if (inflatableSupply != 0 ) {
-            if( tokens > inflatableSupply ) throw;
-            inflatableSupply = safeSub(inflatableSupply, tokens);
-        }
+        uint tokens = safeMul(msg.value, price(now));
+        require(! (safeAdd(saleTokenSupply,tokens)>coinAllocation) );
 
         balances[recipient] = safeAdd(balances[recipient], tokens);
 
-        saleTokenSupply = safeAdd(saleTokenSupply, tokens);
         totalSupply = safeAdd(totalSupply, tokens);
 
         amountRaised = safeAdd(amountRaised, msg.value);
 
-        if (!founder.call.value(msg.value)()) throw; //immediately send Ether to founder address
+        if (!founder.call.value(msg.value)()) revert(); //immediately send Ether to founder address
 
         Buy(recipient, msg.value, tokens);
     }
@@ -246,71 +235,65 @@ contract MoldCoin is StandardToken, SafeMath {
     /**
      * Set up founder address token balance.
      */
-    function allocateFounderTokens() {
-        if (msg.sender!=founder) throw;
-        if (now <= endDatetime) throw;
+    function allocateFounderTokens() onlyAdmin {
 
-        if (founderAllocated) throw;
+        require(!(founderAllocated));
 
         balances[founder] = safeAdd(balances[founder], founderAllocation);
-
         totalSupply = safeAdd(totalSupply, founderAllocation);
-
         founderAllocated = true;
+
         AllocateFounderTokens(msg.sender);
     }
 
     /**
      * Set up angel address token balance.
      */
-    function allocateAngelTokens(address angel, uint tokens) {
-        if (msg.sender!=founder) throw;
-        if (now <= endDatetime) throw;
+    function allocateAngelTokens(address angel, uint tokens) onlyAdmin {
 
-        uint amount = tokens*10**decimals;
-        if ( safeAdd(angelTokenSupply,amount)>angelAllocation ) throw;
+        require(!( safeAdd(angelTokenSupply,tokens)>angelAllocation ));
 
-        angelTokenSupply = safeAdd(angelTokenSupply, amount);
-        balances[angel] = safeAdd(balances[angel], amount);
-        totalSupply = safeAdd(totalSupply, amount);
+        balances[angel] = safeAdd(balances[angel], tokens);
+        angelTokenSupply = safeAdd(angelTokenSupply, tokens);
+        totalSupply = safeAdd(totalSupply, tokens);
 
-        AllocateAngelTokens(msg.sender, angel, amount);
+        AllocateAngelTokens(msg.sender, angel, tokens);
     }
 
     /**
      * Emergency Stop ICO.
      */
-    function halt() {
-        if (msg.sender!=founder) throw;
+    function halt() onlyAdmin {
         halted = true;
     }
 
-    function unhalt() {
-        if (msg.sender!=founder) throw;
+    function unhalt() onlyAdmin {
         halted = false;
     }
 
     /**
-     * Change founder address (where ICO ETH is being forwarded).
+     * Change admin address.
      */
-    function changeFounder(address newFounder) {
-        if (msg.sender!=founder) throw;
-        founder = newFounder;
+    function changeAdmin(address newAdmin) onlyAdmin  {
+        admin = newAdmin;
     }
 
     /**
-     * Inflation
+     * release unsold coins
      */
-    function inflate(uint tokens) {
-        if (msg.sender!=founder) throw;
-        if (now < endDatetime + 4 weeks) throw;
-        if (now < lastInflationDatetime + 4 weeks) throw;
+    function release(uint256 tokens) onlyAdmin {
+        require(now > lastReleaseDatetime + 4 weeks);
 
-        uint amount = tokens*10**decimals;
-        if (safeAdd(safeAdd(saleTokenSupply, inflatableSupply), amount) > coinAllocation) throw;
+        require(tokens <= maxReleaseTokens);
 
-        inflatableSupply = safeAdd(inflatableSupply, amount);
-        lastInflationDatetime = now;
+        require(!(safeAdd(safeAdd(saleTokenSupply, releasedSupply), tokens) > coinAllocation));
+
+        balances[founder] = safeAdd(balances[founder], tokens);
+
+        releasedSupply = safeAdd(releasedSupply, tokens);
+        totalSupply = safeAdd(totalSupply, tokens);
+
+        lastReleaseDatetime = now;
     }
 
     /**
@@ -319,7 +302,7 @@ contract MoldCoin is StandardToken, SafeMath {
      * Prevent transfers until crowdsale period is over.
      */
     function transfer(address _to, uint256 _value) returns (bool success) {
-        if (now <= endDatetime && msg.sender!=founder) throw;
+        require(! (now <= endDatetime && msg.sender!=founder));
         return super.transfer(_to, _value);
     }
 
@@ -329,7 +312,7 @@ contract MoldCoin is StandardToken, SafeMath {
      * Prevent transfers until crowdsale period is over.
      */
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
-        if (now <= endDatetime && msg.sender!=founder) throw;
+        require(! (now <= endDatetime && msg.sender!=founder));
         return super.transferFrom(_from, _to, _value);
     }
 
