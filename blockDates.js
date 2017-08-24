@@ -42,6 +42,6 @@ async function calBlockNumber(startDatetime) {
 }
 
 //Beijing Timezone
-// calBlockNumber(new Date('2017-10-1 12:00:00 GMT+0800'));
+calBlockNumber(new Date('2017-10-1 12:00:00 GMT+0800'));
 
-calBlockNumber(new Date('2017-8-21 12:00:00 GMT+0800'));
+//calBlockNumber(new Date('2017-8-21 12:00:00 GMT+0800'));

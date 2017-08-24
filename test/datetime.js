@@ -13,10 +13,10 @@ contract('Date Range of MoldCoin', function (accounts) {
 
     let instance = await MoldCoin.deployed();
     let startDatetime = await instance.startDatetime();
-    console.log(startDatetime)
+    logger.log(startDatetime)
     {
       let timestamp = Math.floor(wantDate.valueOf() / 1000);
-      console.log(timestamp)
+      logger.log(timestamp)
       assert.equal(startDatetime, timestamp);
     }
 
@@ -51,7 +51,7 @@ contract('Date Range of MoldCoin', function (accounts) {
 
     let instance = await MoldCoin.new(dateTime, founder);
     let startDatetime = await instance.startDatetime();
-    console.log(startDatetime)
+    logger.log(startDatetime)
     {
       let timestamp = dateTime;
       assert.equal(startDatetime, timestamp);

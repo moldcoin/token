@@ -19,45 +19,40 @@ contract TestMoldCoin {
     function testPrice() {
         uint startDatetime = 1000;
         MoldCoin mold = new MoldCoin(startDatetime,0x0);
-        Assert.equal(mold.price(startDatetime), 500, "first stage should return 500");
-        Assert.equal(mold.price(startDatetime + 1 hours), 500, "first stage should return 500");
-        Assert.equal(mold.price(startDatetime + 120 hours), 500, "first stage should return 500");
-        Assert.equal(mold.price(startDatetime + 121 hours), 333, "second stage should return 333");
-        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours), 333, "second stage should return 333");
-        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours + 1 hours), 250, "other time should return 250");
+        Assert.equal(mold.price(startDatetime), 15000, "first stage should return 15000");
+        Assert.equal(mold.price(startDatetime + 1 hours), 15000, "first stage should return 15000");
+        Assert.equal(mold.price(startDatetime + 120 hours), 15000, "first stage should return 15000");
+        Assert.equal(mold.price(startDatetime + 121 hours), 12000, "second stage should return 12000");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours), 12000, "second stage should return 10000");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours + 1 hours), 10000, "until end time should return 10000");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours + 2040 hours), 10000, "until end should return 10000");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours + 2040 hours +  1 seconds), 0, "until end should return 10000");
     }
+
     function testPrice2() {
         uint startDatetime = 123456;
         MoldCoin mold = new MoldCoin(startDatetime,0x0);
-        Assert.equal(mold.price(startDatetime), 500, "first stage should return 500");
         Assert.equal(mold.price(startDatetime - 1 seconds), 0, "should return 0");
-        Assert.equal(mold.price(startDatetime + 120 hours - 1 seconds), 500, "first stage should return 500");
-        Assert.equal(mold.price(startDatetime + 120 hours + 1 seconds), 333, "second stage should return 500");
-        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours - 1 seconds), 333, "second stage should return 333");
-        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours + 1 seconds), 250, "other time should return 250");
+        Assert.equal(mold.price(startDatetime), 15000, "first stage should return 500");
+        Assert.equal(mold.price(startDatetime + 120 hours - 1 seconds), 15000, "first stage should return 15000");
+        Assert.equal(mold.price(startDatetime + 120 hours + 1 seconds), 12000, "second stage should return 12000");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours - 1 seconds), 12000, "second stage should return 333");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours +  1 seconds), 10000, "until end should return 10000");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours  + 2040 hours), 10000, "until end should return 10000");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours  + 2040 hours +  1 seconds), 0, "other should return 10000");
     }
     function testPrice3() {
         MoldCoin mold = MoldCoin(DeployedAddresses.MoldCoin());
 
         uint startDatetime = mold.startDatetime();
-        Assert.equal(mold.price(startDatetime), 500, "first stage should return 500");
         Assert.equal(mold.price(startDatetime - 1 seconds), 0, "should return 0");
-        Assert.equal(mold.price(startDatetime + 120 hours - 1 seconds), 500, "first stage should return 500");
-        Assert.equal(mold.price(startDatetime + 120 hours + 1 seconds), 333, "second stage should return 500");
-        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours - 1 seconds), 333, "second stage should return 333");
-        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours + 1 seconds), 250, "other time should return 250");
+        Assert.equal(mold.price(startDatetime), 15000, "first stage should return 500");
+        Assert.equal(mold.price(startDatetime + 120 hours - 1 seconds), 15000, "first stage should return 500");
+        Assert.equal(mold.price(startDatetime + 120 hours + 1 seconds), 12000, "second stage should return 500");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours - 1 seconds), 12000, "second stage should return 333");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours +  1 seconds), 10000, "until end should return 10000");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours  + 2040 hours), 10000, "until end should return 10000");
+        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours  + 2040 hours +  1 seconds), 0, "other should return 10000");
     }
-//    function testBuy() {
-//        uint startDatetime = now;
-//        MoldCoin mold = new MoldCoin(startDatetime);
-//        bool r = mold.buy.gas(200000)();
-//        Assert.isFalse(r, "Should be false, as it should throw");
 
-//        Assert.equal(mold.price(startDatetime), 500, "first stage should return 500");
-//        Assert.equal(mold.price(startDatetime + 1 hours), 500, "first stage should return 500");
-//        Assert.equal(mold.price(startDatetime + 120 hours), 500, "first stage should return 500");
-//        Assert.equal(mold.price(startDatetime + 121 hours), 333, "second stage should return 333");
-//        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours), 333, "second stage should return 333");
-//        Assert.equal(mold.price(startDatetime + 120 hours + 240 hours + 1 hours), 250, "other time should return 250");
-//    }
 }

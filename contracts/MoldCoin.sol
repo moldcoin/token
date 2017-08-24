@@ -145,11 +145,9 @@ contract MoldCoin is StandardToken, SafeMath {
     address public admin;
 
     uint public coinAllocation = 20 * 10**8 * 10**decimals; //2000M tokens supply for crowdsale
-    uint public angelAllocation = 1 * 10**8 * 10**decimals; // 100M of token supply allocated angel investor
-    uint public founderAllocation = 4 * 10**8 * 10**decimals; //400M of token supply allocated for the founder allocation
+    uint public angelAllocation = 2 * 10**8 * 10**decimals; // 200M of token supply allocated angel investor
+    uint public founderAllocation = 3 * 10**8 * 10**decimals; //300M of token supply allocated for the founder allocation
 
-    bool public bountyAllocated = false; //this will change to true when the bounty fund is allocated
-    bool public angelAllocated = false; //this will change to true when the ecosystem fund is allocated
     bool public founderAllocated = false; //this will change to true when the founder fund is allocated
 
     uint public saleTokenSupply = 0; //this will keep track of the token supply created during the crowdsale
@@ -157,22 +155,23 @@ contract MoldCoin is StandardToken, SafeMath {
 
     uint public angelTokenSupply = 0; //this will keep track of the token angel supply
 
-    //add supply per month 1% until all coin was allocated in the end of crowdsale will keep track of the token angel supply
-    uint public lastReleaseDatetime = 0;
-    uint public releasedSupply = 0;
-    uint public maxReleaseTokens = 2 * 10**6 * 10**decimals; //2M of unsold tokens will be releasable every month
+    bool public halted = false; //the admin address can set this to true to halt the crowdsale due to emergency
 
-    bool public halted = false; //the founder address can set this to true to halt the crowdsale due to emergency
-
-    event Buy(address indexed sender, uint eth, uint mold);
-    event Withdraw(address indexed sender, address to, uint eth);
-    event AllocateFounderTokens(address indexed sender);
-    event AllocateAngelTokens(address indexed sender, address to, uint mold);
+    event Buy(address indexed sender, uint eth, uint tokens);
+    event AllocateFounderTokens(address indexed sender, uint tokens);
+    event AllocateAngelTokens(address indexed sender, address to, uint tokens);
+    event AllocateUnsoldTokens(address indexed sender, address holder, uint tokens);
 
     modifier onlyAdmin {
         require(msg.sender == admin);
         _;
     }
+
+    modifier duringCrowdSale {
+        require(now >= startDatetime && now <= endDatetime);
+        _;
+    }
+
     /**
      *
      * Integer value representing the number of seconds since 1 January 1970 00:00:00 UTC
@@ -185,19 +184,20 @@ contract MoldCoin is StandardToken, SafeMath {
         firstStageDatetime = startDatetime + 120 * 1 hours;
         secondStageDatetime = firstStageDatetime + 240 * 1 hours;
         endDatetime = secondStageDatetime + 2040 * 1 hours;
-        lastReleaseDatetime = endDatetime;
+
     }
 
     /**
-     * - Price for crowdsale by time
+     * Price for crowdsale by time
      */
     function price(uint timeInSeconds) constant returns(uint) {
         if (timeInSeconds < startDatetime) return 0;
-        if (timeInSeconds <= firstStageDatetime) return 500; //120 hours
-        if (timeInSeconds <= secondStageDatetime) return 333; //240 hours
-        if (timeInSeconds <= endDatetime) return 250; //2040 hours
+        if (timeInSeconds <= firstStageDatetime) return 15000; //120 hours
+        if (timeInSeconds <= secondStageDatetime) return 12000; //240 hours
+        if (timeInSeconds <= endDatetime) return 10000; //2040 hours
         return 0;
     }
+
     /**
      * allow anyone sends funds to the contract
      */
@@ -213,18 +213,16 @@ contract MoldCoin is StandardToken, SafeMath {
      * Main token buy function.
      * Buy for the sender itself or buy on the behalf of somebody else (third party address).
      */
-    function buyRecipient(address recipient) payable {
+    function buyRecipient(address recipient) duringCrowdSale payable {
         require(!halted);
-        require(now >= startDatetime);
-        require(now <= endDatetime);
 
         uint tokens = safeMul(msg.value, price(now));
-        require(! (safeAdd(saleTokenSupply,tokens)>coinAllocation) );
+        require(safeAdd(saleTokenSupply,tokens)<=coinAllocation );
 
         balances[recipient] = safeAdd(balances[recipient], tokens);
 
         totalSupply = safeAdd(totalSupply, tokens);
-
+        saleTokenSupply = safeAdd(saleTokenSupply, tokens);
         amountRaised = safeAdd(amountRaised, msg.value);
 
         if (!founder.call.value(msg.value)()) revert(); //immediately send Ether to founder address
@@ -236,14 +234,14 @@ contract MoldCoin is StandardToken, SafeMath {
      * Set up founder address token balance.
      */
     function allocateFounderTokens() onlyAdmin {
-
-        require(!(founderAllocated));
+        require( now > endDatetime );
+        require(!founderAllocated);
 
         balances[founder] = safeAdd(balances[founder], founderAllocation);
         totalSupply = safeAdd(totalSupply, founderAllocation);
         founderAllocated = true;
 
-        AllocateFounderTokens(msg.sender);
+        AllocateFounderTokens(msg.sender, founderAllocation);
     }
 
     /**
@@ -251,7 +249,7 @@ contract MoldCoin is StandardToken, SafeMath {
      */
     function allocateAngelTokens(address angel, uint tokens) onlyAdmin {
 
-        require(!( safeAdd(angelTokenSupply,tokens)>angelAllocation ));
+        require(safeAdd(angelTokenSupply,tokens) <= angelAllocation );
 
         balances[angel] = safeAdd(balances[angel], tokens);
         angelTokenSupply = safeAdd(angelTokenSupply, tokens);
@@ -279,42 +277,19 @@ contract MoldCoin is StandardToken, SafeMath {
     }
 
     /**
-     * release unsold coins
+     * arrange unsold coins
      */
-    function release(uint256 tokens) onlyAdmin {
-        require(now > lastReleaseDatetime + 4 weeks);
+    function arrangeUnsoldTokens(address holder, uint256 tokens) onlyAdmin {
+        require( now > endDatetime );
+        require( safeAdd(saleTokenSupply,tokens) <= coinAllocation );
+        require( balances[holder] >0 );
 
-        require(tokens <= maxReleaseTokens);
-
-        require(!(safeAdd(safeAdd(saleTokenSupply, releasedSupply), tokens) > coinAllocation));
-
-        balances[founder] = safeAdd(balances[founder], tokens);
-
-        releasedSupply = safeAdd(releasedSupply, tokens);
+        balances[holder] = safeAdd(balances[holder], tokens);
+        saleTokenSupply = safeAdd(saleTokenSupply, tokens);
         totalSupply = safeAdd(totalSupply, tokens);
 
-        lastReleaseDatetime = now;
-    }
+        AllocateUnsoldTokens(msg.sender, holder, tokens);
 
-    /**
-     * ERC 20 Standard Token interface transfer function
-     *
-     * Prevent transfers until crowdsale period is over.
-     */
-    function transfer(address _to, uint256 _value) returns (bool success) {
-        require(! (now <= endDatetime && msg.sender!=founder));
-        return super.transfer(_to, _value);
     }
-
-    /**
-     * ERC 20 Standard Token interface transfer function
-     *
-     * Prevent transfers until crowdsale period is over.
-     */
-    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
-        require(! (now <= endDatetime && msg.sender!=founder));
-        return super.transferFrom(_from, _to, _value);
-    }
-
 
 }

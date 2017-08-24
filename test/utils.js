@@ -10,7 +10,7 @@ const logger = require("tracer").console({
 });
 
 const toWei = function (amount) {
-  return web3.toWei(amount, "ether");
+  return web3.toWei(amount, 'ether');
 }
 
 const tokens = function (amount) {
