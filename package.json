@@ -1,6 +1,6 @@
 {
   "name": "moldcoin",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "moldcoin",
   "author": "MoldCoin team",
   "scripts": {
@@ -11,21 +11,9 @@
     "type": "git",
     "url": "https://github.com/moldcoin/token.git"
   },
-  "dependencies": {
-    "axios": "^0.16.2",
-    "chalk": "^2.1.0",
-    "figlet": "^1.2.0",
-    "koa": "^2.3.0",
-    "koa-bodyparser": "^4.2.0",
-    "koa-compress": "^2.0.0",
-    "koa-logger": "^3.0.1",
-    "koa-router-cache": "^2.0.0",
-    "koa-static-cache": "^5.1.1",
-    "tracer": "^0.8.11",
-    "web3": "^1.0.0-beta2",
-    "zlib": "^1.0.5"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "axios": "^0.16.2",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^6.1.2",
@@ -58,7 +46,8 @@
     "vue-template-compiler": "^2.4.2",
     "webpack": "^2.7.0",
     "webpack-dev-server": "^2.7.1",
-    "webpack-hot-middleware": "^2.17.1"
+    "webpack-hot-middleware": "^2.17.1",
+    "web3": "^0.20.1"
   },
   "engines": {
     "node": ">=8"

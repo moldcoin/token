@@ -1,35 +1,40 @@
-const gulp = require('gulp');
-const del = require('del');
-const shell = require('gulp-shell');
+const gulp = require('gulp')
+const del = require('del')
+const shell = require('gulp-shell')
 
-gulp.task('testrpc', shell.task('node_modules/.bin/testrpc --account="0xfeb72ffb6bb482e3d4b5f0168f24ece904e8ddb7d3076362b94a209078666de6,5000000000000000000000000" --account="0xdd1f69c790ec35a5e70b6511b2c7128a23109617372bcc3102d0caef47ffdf0e,0" --account="0xfe1b14649a99e27ad630e19d114330db7fc30870c4fd8a5d3946a15cd0b111d6,0" --account="0xa61266a8513e80ad455ff5764e155ab492c365a2b720084a77427436eb3de01c,0"　'));
+gulp.task('testrpc', shell.task('node_modules/.bin/testrpc --account="0xfeb72ffb6bb482e3d4b5f0168f24ece904e8ddb7d3076362b94a209078666de6,5000000000000000000000000" --account="0xdd1f69c790ec35a5e70b6511b2c7128a23109617372bcc3102d0caef47ffdf0e,0" --account="0xfe1b14649a99e27ad630e19d114330db7fc30870c4fd8a5d3946a15cd0b111d6,100000000000000000000" --account="0xa61266a8513e80ad455ff5764e155ab492c365a2b720084a77427436eb3de01c,100000000000000000000"　'))
 
-gulp.task('test', shell.task('node_modules/.bin/truffle test'));
+gulp.task('test', shell.task('node_modules/.bin/truffle test'))
 
-gulp.task('contracts:compile', shell.task('node_modules/.bin/truffle compile'));
-gulp.task('contracts:migrate:development', shell.task('node_modules/.bin/truffle migrate --network development'));
-gulp.task('contracts:migrate:testnet', shell.task('node_modules/.bin/truffle migrate --network testnet'));
+gulp.task('contracts:compile', shell.task('node_modules/.bin/truffle compile'))
+gulp.task('contracts:migrate:development', shell.task('node_modules/.bin/truffle migrate --network development'))
+gulp.task('contracts:migrate:testnet', shell.task('node_modules/.bin/truffle migrate --network testnet'))
 // gulp.task('contracts:migrate:live', shell.task('node_modules/.bin/truffle migrate --network live'));
-gulp.task('contracts:migrate:reset', shell.task('node_modules/.bin/truffle migrate --reset'));
+gulp.task('contracts:migrate:reset', shell.task('node_modules/.bin/truffle migrate --reset'))
 
-gulp.task('webpack',  ['theme', 'contracts:compile'], shell.task('./node_modules/.bin/webpack --config webpack.dist.config.js'));
+gulp.task('webpack', ['theme', 'contracts:compile'], shell.task('./node_modules/.bin/webpack --config webpack.dist.config.js'))
 
 gulp.task('theme', function () {
-    return gulp.src(['app/**/*.*', '!app/src/*.*'])
-        .pipe(gulp.dest('build/'));
-});
+  return gulp.src(['app/**/*.*', '!app/src/*.*', '!app/contracts/*.*'])
+    .pipe(gulp.dest('build/'))
+})
 
-gulp.task('build', ['theme', 'contracts:compile', 'webpack']);
+gulp.task('copyContract', function () {
+  return gulp.src(['build/contracts/**/*.*'])
+    .pipe(gulp.dest('app/contracts/'))
+})
 
-gulp.task('clean', function() {
-    del(['build']);
-});
+gulp.task('build', ['theme', 'contracts:compile', 'webpack'])
 
-gulp.task('watch', ['theme', 'contracts:compile'], function () {
-    gulp.watch(['app/**/*.*', '!app/src/*.*'], ['theme']);
-    gulp.watch(['contracts/**/*.sol'], ['contracts:compile']);
-});
+gulp.task('clean', function () {
+  del(['build'])
+})
 
-gulp.task('dev', ['watch'], shell.task('./node_modules/.bin/webpack-dev-server --content-base build/ --hot --watch-content-base --config webpack.config.js'));
+gulp.task('watch', ['theme', 'contracts:compile', 'copyContract'], function () {
+  gulp.watch(['app/**/*.*', '!app/src/*.*'], ['theme'])
+  gulp.watch(['contracts/**/*.sol'], ['contracts:compile', 'copyContract'])
+})
 
-gulp.task('default', ['build', 'contracts:compile', 'webpack']);
+gulp.task('dev', ['watch'], shell.task('./node_modules/.bin/webpack-dev-server --content-base build/ --hot --watch-content-base --config webpack.config.js'))
+
+gulp.task('default', ['build', 'contracts:compile', 'webpack'])

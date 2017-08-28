@@ -20,3 +20,5 @@ const tokens = function (amount) {
 module.exports = {
   logger, toWei, tokens
 };
+
+//console.log(global);
