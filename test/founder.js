@@ -112,23 +112,16 @@ contract('Administrator of Mold', function (accounts) {
     let dateTime = Math.floor(Date.now() / 1000) - 1
 
     let instance = await MoldCoin.new(dateTime, founder)
-    let result = await instance.sendTransaction({value: toWei(1), from: founder})
+    let result = await instance.sendTransaction({value: toWei(1), from: user1})
     logger.log(result)
-
-    let holdCoin = await instance.balanceOf(founder)
-    logger.log(holdCoin)
-    assert.equal(parseFloat(holdCoin), tokens(15000))
     try {
       {
         let result = await instance.halt();
         logger.log(result)
       }
 
-      let result = await instance.sendTransaction({value: toWei(0), from: founder})
+      let result = await instance.sendTransaction({value: toWei(1), from: user1})
       logger.log(result)
-      let holdCoin = await instance.balanceOf(founder)
-      logger.log(holdCoin)
-      assert.equal(parseFloat(holdCoin), tokens(30000))
 
     } catch (e) {
       logger.log(e)
@@ -141,7 +134,7 @@ contract('Administrator of Mold', function (accounts) {
     }
 
     {
-      let result = await instance.sendTransaction({value: toWei(0), from: founder})
+      let result = await instance.sendTransaction({value: toWei(1), from: user1})
       logger.log(result)
 
     }

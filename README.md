@@ -21,3 +21,10 @@
  
      npm run test
  
+ ## Contract
+ 
+ You can read through contract [Solidity Source Code](https://github.com/moldcoin/token/blob/master/contracts/MoldCoin.sol).
+ 
+ Welcome any issue report.
+ 
+ 

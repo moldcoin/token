@@ -4,8 +4,8 @@
   "description": "moldcoin",
   "author": "MoldCoin team",
   "scripts": {
-    "test": "./node_modules/.bin/truffle test",
-    "testrpc": "node_modules/.bin/testrpc --account='0xfeb72ffb6bb482e3d4b5f0168f24ece904e8ddb7d3076362b94a209078666de6,5000000000000000000000000' --account='0xdd1f69c790ec35a5e70b6511b2c7128a23109617372bcc3102d0caef47ffdf0e,0'"
+    "test": "./node_modules/.bin/gulp test",
+    "testrpc": "./node_modules/.bin/gulp testrpc"
   },
   "repository": {
     "type": "git",
@@ -38,16 +38,17 @@
     "gulp-shell": "^0.6.3",
     "html-webpack-plugin": "^2.30.1",
     "json-loader": "^0.5.7",
+    "tracer": "^0.8.11",
     "truffle": "^3.4.9",
     "truffle-contract": "^1.1.10",
     "url-loader": "^0.5.7",
     "vue": "^2.4.2",
     "vue-loader": "^10.0.2",
     "vue-template-compiler": "^2.4.2",
+    "web3": "^0.20.1",
     "webpack": "^2.7.0",
     "webpack-dev-server": "^2.7.1",
-    "webpack-hot-middleware": "^2.17.1",
-    "web3": "^0.20.1"
+    "webpack-hot-middleware": "^2.17.1"
   },
   "engines": {
     "node": ">=8"
