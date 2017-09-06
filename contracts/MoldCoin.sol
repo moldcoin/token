@@ -128,8 +128,8 @@ contract StandardToken is Token {
  */
 contract MoldCoin is StandardToken, SafeMath {
 
-    string public name = "MoldCoin";
-    string public symbol = "MOLD";
+    string public name = "Mold";
+    string public symbol = "MLD";
     uint public decimals = 18;
 
     uint public startDatetime; //crowdsale start datetime seconds
@@ -168,7 +168,7 @@ contract MoldCoin is StandardToken, SafeMath {
     }
 
     modifier duringCrowdSale {
-        require(now >= startDatetime && now <= endDatetime);
+        require(block.timestamp >= startDatetime && block.timestamp <= endDatetime);
         _;
     }
 
@@ -216,7 +216,7 @@ contract MoldCoin is StandardToken, SafeMath {
     function buyRecipient(address recipient) duringCrowdSale payable {
         require(!halted);
 
-        uint tokens = safeMul(msg.value, price(now));
+        uint tokens = safeMul(msg.value, price(block.timestamp));
         require(safeAdd(saleTokenSupply,tokens)<=coinAllocation );
 
         balances[recipient] = safeAdd(balances[recipient], tokens);
@@ -234,7 +234,7 @@ contract MoldCoin is StandardToken, SafeMath {
      * Set up founder address token balance.
      */
     function allocateFounderTokens() onlyAdmin {
-        require( now > endDatetime );
+        require( block.timestamp > endDatetime );
         require(!founderAllocated);
 
         balances[founder] = safeAdd(balances[founder], founderAllocation);
@@ -280,7 +280,7 @@ contract MoldCoin is StandardToken, SafeMath {
      * arrange unsold coins
      */
     function arrangeUnsoldTokens(address holder, uint256 tokens) onlyAdmin {
-        require( now > endDatetime );
+        require( block.timestamp > endDatetime );
         require( safeAdd(saleTokenSupply,tokens) <= coinAllocation );
         require( balances[holder] >0 );
 

@@ -38,6 +38,8 @@
     "gulp-shell": "^0.6.3",
     "html-webpack-plugin": "^2.30.1",
     "json-loader": "^0.5.7",
+    "moment": "^2.18.1",
+    "qrcodejs2": "0.0.2",
     "tracer": "^0.8.11",
     "truffle": "^3.4.9",
     "truffle-contract": "^1.1.10",
