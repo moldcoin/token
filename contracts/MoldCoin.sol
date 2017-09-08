@@ -123,7 +123,7 @@ contract StandardToken is Token {
 
 
 /**
- * MoldCoin ICO contract.
+ * MoldCoin crowdsale contract.
  *
  */
 contract MoldCoin is StandardToken, SafeMath {
@@ -259,7 +259,7 @@ contract MoldCoin is StandardToken, SafeMath {
     }
 
     /**
-     * Emergency Stop ICO.
+     * Emergency Stop crowdsale.
      */
     function halt() onlyAdmin {
         halted = true;
