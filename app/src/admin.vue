@@ -6,7 +6,7 @@
         <div class="am-g">
             <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">合约地址</div>
             <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
-                <code>{{ contractAddress }}</code>
+                <div><code>{{ contractAddress }}</code></div>
                 <div class="text-center" id="qrcode" ref="qrCode">
                 </div>
             </div>
@@ -62,13 +62,13 @@
             <div class="am-g">
                 <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">创始人多重签名账号</div>
                 <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
-                    <a href="">{{founderAddress}}</a>
+                    <a :href="etherscan + founderAddress">{{founderAddress}}</a>
                 </div>
             </div>
             <div class="am-g">
                 <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">管理员账号</div>
                 <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
-                    <a href="">{{adminAddress}}</a>
+                    <a :href="etherscan + adminAddress">{{adminAddress}}</a>
                 </div>
             </div>
         </div>
@@ -102,7 +102,7 @@
                 <div class="am-g">
                     <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">MOLD余额</div>
                     <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
-                        {{ moldBalance }} MOLD
+                        {{ moldBalance }} MLD
                     </div>
                 </div>
 
@@ -192,7 +192,7 @@
   const mainnet = 'https://mainnet.infura.io/YhHYu1TQSarPFPYvEQbW'
   const testnet = 'https://ropsten.infura.io/YhHYu1TQSarPFPYvEQbW'
   //使用测试网络
-  const network = testnet
+  const network = mainnet
 
   //
   let web3
@@ -201,8 +201,8 @@
   module.exports = {
     data () {
       return {
-        isTestNetwork: true,
-        contractAddress: '0x9a51F8FDD2D43C79Da4549D452d35970BbEFc48F',
+        isTestNetwork: false,
+        contractAddress: '0x09181C5E6f1bb206d1d1dF5a43Be922322B378bf',
         walletProvider: undefined,
         infuraProvider: '',
         accounts: [],
@@ -227,6 +227,7 @@
         founderAllocated:false,
         inputAngelMld: 100,
         inputAngelAddress: '',
+        etherscan: 'https://etherscan.io/address/',
       }
     },
 
@@ -345,7 +346,13 @@
         })
 
         web3.eth.getBlock(0, (err, block) => {
+
           var data = {}
+          this.network = data
+          if (err) {
+            console.log(err, accounts)
+            return
+          }
 
           if (block && block.hash === '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3') {
             data.chain = 'mainnet'
@@ -363,8 +370,8 @@
             data.chain = 'privatenet'
             data.etherscan = 'https://testnet.etherscan.io'
           }
-
           this.network = data
+
         })
 
 //        web3.version.getNetwork((err, result) => {

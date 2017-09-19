@@ -4,11 +4,10 @@ const webpack = require('webpack')
 module.exports = {
   entry: {
     main: './app/src/main.js',
-    admin: './app/src/main.js',
+    admin: './app/src/admin.js',
   },
   output: {
     path: path.resolve(__dirname, './build/js'),
-    publicPath: '/build/js/',
     filename: '[name].js'
 
   },

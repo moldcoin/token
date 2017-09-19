@@ -4,8 +4,8 @@ const SolidityCoder = require('web3/lib/solidity/coder');
 
 const web3 = new Web3()
 
-const startDatetime = Math.floor(Date.parse('2017-09-01T00:00:00Z') / 1000);
-const founder = '0x5B8B75Dd1E7831563a523F6bf277BEEF714ff3c8';
+const startDatetime = Math.floor(Date.parse('2017-10-1 12:00:00 GMT+0800') / 1000);
+const founder = '0xcb0d8b9d7031cf1199b09d1c3ae084ed38e54c07';
 const admin = '0x5C8f033E2A29467D867c664D62BAa08C2d332761';
 
 console.log(`${startDatetime},"${founder}"`)

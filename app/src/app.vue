@@ -6,7 +6,7 @@
         <div class="am-g">
             <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">Contract Address</div>
             <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
-                <code>{{ contractAddress }}</code>
+                <div><code>{{ contractAddress }}</code></div>
                 <div class="text-center" id="qrcode" ref="qrCode">
                 </div>
             </div>
@@ -91,7 +91,7 @@
                 <div class="am-g">
                     <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">MOLD Balance</div>
                     <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
-                        {{ moldBalance }} MOLD
+                        {{ moldBalance }} MLD
                     </div>
                 </div>
 
@@ -144,7 +144,7 @@
   const mainnet = 'https://mainnet.infura.io/YhHYu1TQSarPFPYvEQbW'
   const testnet = 'https://ropsten.infura.io/YhHYu1TQSarPFPYvEQbW'
   //使用测试网络
-  const network = testnet
+  const network = mainnet
 
   //
   let web3
@@ -152,8 +152,8 @@
   module.exports = {
     data () {
       return {
-        isTestNetwork: true,
-        contractAddress: '0x9a51F8FDD2D43C79Da4549D452d35970BbEFc48F',
+        isTestNetwork: false,
+        contractAddress: '0x09181C5E6f1bb206d1d1dF5a43Be922322B378bf',
         walletProvider: undefined,
         infuraProvider: '',
         accounts: [],
@@ -307,10 +307,10 @@
           this.network = data
         })
 
-        web3.version.getNetwork((err, result) => {
-
-          console.log(err, result)
-        })
+//        web3.version.getNetwork((err, result) => {
+//
+//          console.log(err, result)
+//        })
       },
 
       async buyMold () {
