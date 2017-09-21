@@ -123,19 +123,19 @@ contract StandardToken is Token {
 
 
 /**
- * MoldCoin crowdsale contract.
+ * MoldCoin pre-sell contract.
  *
  */
 contract MoldCoin is StandardToken, SafeMath {
 
-    string public name = "Mold";
+    string public name = "MOLD";
     string public symbol = "MLD";
     uint public decimals = 18;
 
-    uint public startDatetime; //crowdsale start datetime seconds
-    uint public firstStageDatetime; //first 120 hours crowdsale in seconds
-    uint public secondStageDatetime; //second stage, 240 hours of crowsale in seconds.
-    uint public endDatetime; //crowdsale end datetime seconds (set in constructor)
+    uint public startDatetime; //pre-sell start datetime seconds
+    uint public firstStageDatetime; //first 120 hours pre-sell in seconds
+    uint public secondStageDatetime; //second stage, 240 hours of pre-sell in seconds.
+    uint public endDatetime; //pre-sell end datetime seconds (set in constructor)
 
     // Initial founder address (set in constructor)
     // All deposited ETH will be instantly forwarded to this address.
@@ -144,18 +144,18 @@ contract MoldCoin is StandardToken, SafeMath {
     // administrator address
     address public admin;
 
-    uint public coinAllocation = 20 * 10**8 * 10**decimals; //2000M tokens supply for crowdsale
+    uint public coinAllocation = 20 * 10**8 * 10**decimals; //2000M tokens supply for pre-sell
     uint public angelAllocation = 2 * 10**8 * 10**decimals; // 200M of token supply allocated angel investor
     uint public founderAllocation = 3 * 10**8 * 10**decimals; //300M of token supply allocated for the founder allocation
 
     bool public founderAllocated = false; //this will change to true when the founder fund is allocated
 
-    uint public saleTokenSupply = 0; //this will keep track of the token supply created during the crowdsale
-    uint public amountRaised = 0; //this will keep track of the Ether raised during the crowdsale
+    uint public saleTokenSupply = 0; //this will keep track of the token supply created during the pre-sell
+    uint public salesVolume = 0; //this will keep track of the Ether raised during the pre-sell
 
     uint public angelTokenSupply = 0; //this will keep track of the token angel supply
 
-    bool public halted = false; //the admin address can set this to true to halt the crowdsale due to emergency
+    bool public halted = false; //the admin address can set this to true to halt the pre-sell due to emergency
 
     event Buy(address indexed sender, uint eth, uint tokens);
     event AllocateFounderTokens(address indexed sender, uint tokens);
@@ -223,7 +223,7 @@ contract MoldCoin is StandardToken, SafeMath {
 
         totalSupply = safeAdd(totalSupply, tokens);
         saleTokenSupply = safeAdd(saleTokenSupply, tokens);
-        amountRaised = safeAdd(amountRaised, msg.value);
+        salesVolume = safeAdd(salesVolume, msg.value);
 
         if (!founder.call.value(msg.value)()) revert(); //immediately send Ether to founder address
 

@@ -32,7 +32,7 @@
             <div class="am-g">
                 <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">收到的以太币数量</div>
                 <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
-                    {{ amountRaised }} ETH
+                    {{ salesVolume }} ETH
                 </div>
             </div>
             <div class="am-g">
@@ -167,6 +167,12 @@
                     </form>
                 </div>
                 <hr>
+                <div class="am-g">
+                    <form class="am-form-inline" role="form">
+
+                        <button type="button" class="am-btn am-btn-warning" v-on:click="selfdestruct">销毁</button>
+                    </form>
+                </div>
 
             </div>
             <div v-else>请输入密码解锁MetaMask</div>
@@ -211,7 +217,7 @@
         name: '',
         symbol: '',
         decimals: 0,
-        amountRaised: 0,
+        salesVolume: 0,
         startDatetime: null,
         firstStageDatetime: null,
         secondStageDatetime: null,
@@ -269,9 +275,9 @@
         this.symbol = await instance.symbol()
         let decimals = await instance.decimals()
         this.decimals = parseInt(decimals)
-        let amountRaised = await instance.amountRaised()
+        let salesVolume = await instance.salesVolume()
 
-        this.amountRaised = parseFloat(web3.fromWei(amountRaised, 'ether'))
+        this.salesVolume = parseFloat(web3.fromWei(salesVolume, 'ether'))
 
         let startDatetime = await instance.startDatetime()
         this.startDatetime = new moment(startDatetime * 1000)
@@ -457,6 +463,13 @@
 
       },
 
+      async selfdestruct() {
+        let Mold = this.Mold
+        let instance = await Mold.at(this.contractAddress)
+        console.log(instance)
+        let result = await instance.destruct(this.adminAddress);
+        console.log(result);
+      }
 
 
     },

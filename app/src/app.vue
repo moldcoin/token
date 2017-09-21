@@ -30,31 +30,31 @@
                 </div>
             </div>
             <div class="am-g">
-                <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">Amount Raised</div>
+                <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">Sales Volume</div>
                 <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
-                    {{ amountRaised }} ETH
+                    {{ salesVolume }} ETH
                 </div>
             </div>
             <div class="am-g">
-                <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">CrowSale Start Time </div>
+                <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">Pre-sell Start Time </div>
                 <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
                     {{ startDatetime | format }}
                 </div>
             </div>
             <div class="am-g">
-                <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">CrowSale First Stage Time</div>
+                <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">Pre-sell First Stage Time</div>
                 <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
                     {{ firstStageDatetime | format }}
                 </div>
             </div>
             <div class="am-g">
-                <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">CrowSale Second Stage Time</div>
+                <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">Pre-sell Second Stage Time</div>
                 <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
                     {{ secondStageDatetime | format }}
                 </div>
             </div>
             <div class="am-g">
-                <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">CrowSale End Time</div>
+                <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">Pre-sell End Time</div>
                 <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
                     {{ endDatetime | format}}
                 </div>
@@ -153,7 +153,7 @@
     data () {
       return {
         isTestNetwork: false,
-        contractAddress: '0x09181C5E6f1bb206d1d1dF5a43Be922322B378bf',
+        contractAddress: '0x52E30201f31283dc5F7928b4198896083F604416',
         walletProvider: undefined,
         infuraProvider: '',
         accounts: [],
@@ -162,7 +162,7 @@
         name: '',
         symbol: '',
         decimals: 0,
-        amountRaised: 0,
+        salesVolume: 0,
         startDatetime: null,
         firstStageDatetime: null,
         secondStageDatetime: null,
@@ -213,9 +213,9 @@
         this.symbol = await instance.symbol()
         let decimals = await instance.decimals()
         this.decimals = parseInt(decimals)
-        let amountRaised = await instance.amountRaised()
+        let salesVolume = await instance.salesVolume()
 
-        this.amountRaised = parseFloat(web3.fromWei(amountRaised, 'ether'))
+        this.salesVolume = parseFloat(web3.fromWei(salesVolume, 'ether'))
 
         let startDatetime = await instance.startDatetime()
         this.startDatetime = new moment(startDatetime * 1000)

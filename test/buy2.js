@@ -218,7 +218,7 @@ contract('Buy MoldCoin 2', function (accounts) {
       assert.equal(result.logs[0].args.tokens, tokens(20 * 10 ** 8 - 10000))
     }
     {
-      let result = await instance.amountRaised.call()
+      let result = await instance.salesVolume.call()
       logger.log(result)
       assert.equal(result.toString(10), toWei((20 * 10 ** 8 - 10000) / 10000))
     }
