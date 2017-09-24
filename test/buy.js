@@ -20,11 +20,50 @@ contract('Test Buy MoldCoin', function (accounts) {
 
     logger.log(owner);
 
-    let instance = await MoldCoin.new(dateTime, founder);
+    let ethBalance;
     {
-      let result = await instance.buy({value: toWei(1)});
-      logger.log(result);
-      assert.equal(result.logs[0].args.tokens, tokens(15000 * 1));
+      ethBalance = web3.eth.getBalance(founder);
+      logger.info(ethBalance);
+
+    }
+
+    let instance = await MoldCoin.new(dateTime, founder);
+
+    let tokenBalance;
+    {
+      tokenBalance = await instance.salesVolume();
+      logger.info(tokenBalance);
+
+    }
+
+    {
+      try{
+        let result = await instance.buy({value: toWei(1), gas: 180000});
+        logger.info(result);
+        assert.equal(result.logs[0].args.tokens, tokens(15000 * 1));
+        {
+          let balance = web3.eth.getBalance(founder);
+          console.info(balance);
+          console.info(ethBalance.plus(toWei(1)), balance)
+          assert.equal(ethBalance.plus(toWei(1)).toString(), balance.toString());
+
+        }
+      }catch(e){
+        logger.info(e);
+        {
+          let balance = web3.eth.getBalance(founder);
+          logger.info(balance);
+          assert.equal(ethBalance.toString(), balance.toString());
+
+        }
+
+      }
+
+    }
+    {
+      let balance = await instance.salesVolume();
+      logger.info(balance);
+      assert.equal(tokenBalance.plus(toWei(1)).toString(), balance.toString());
 
     }
     {
